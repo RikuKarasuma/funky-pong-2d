@@ -3,7 +3,7 @@
 #include "sdl/sdl_draw.hpp"
 #include "models.hpp"
 
-
+static const uint16_t BALL_RADIUS = 10;
 
 inline void draw_ball(SDL_Renderer* renderer,
                       float x,
@@ -13,7 +13,7 @@ inline void draw_ball(SDL_Renderer* renderer,
     const Circle ball {
         static_cast<int16_t>(x),
         static_cast<int16_t>(y),
-        10,
+        BALL_RADIUS,
         ball_color
     };
     draw_circle(renderer, ball);
