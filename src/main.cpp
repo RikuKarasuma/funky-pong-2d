@@ -1,7 +1,8 @@
-#include "sdl_setup.hpp"
-#include "sdl_exit.hpp"
-#include "sdl_draw.hpp"
+#include "sdl/sdl_setup.hpp"
+#include "sdl/sdl_exit.hpp"
+#include "sdl/sdl_draw.hpp"
 #include "court.hpp"
+#include "ball.hpp"
 
 static short status {0};
 
@@ -42,6 +43,8 @@ void main_loop() {
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
         draw_court(renderer);
+        draw_ball(renderer);
+
 
         SDL_RenderPresent(renderer);
     }

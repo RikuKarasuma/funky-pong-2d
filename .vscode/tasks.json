@@ -14,7 +14,8 @@
         "funky_pong_2d",
         "src/main.cpp",
         "-Iinclude",
-        "-lSDL2"
+        "-lSDL2",
+        "-lSDL2_gfx"
       ],
       "group": {
         "kind": "build",
