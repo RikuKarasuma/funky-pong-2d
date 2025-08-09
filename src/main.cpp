@@ -39,7 +39,7 @@ void main_loop() {
     std::srand(static_cast<unsigned>(time(nullptr)));
 
     const int16_t court_x = 25;
-    const int16_t court_width = 605;
+    const int16_t court_width = 615;
     const int16_t court_y = 25;
     const int16_t court_height = 395;
 
@@ -65,11 +65,12 @@ void main_loop() {
             break;
         }
 
+        velocity_x = check_and_invert(x, court_x, court_width, velocity_x);
+        velocity_y = check_and_invert(y, court_y, court_height, velocity_y);
+
         x += velocity_x;
         y += velocity_y;
 
-        velocity_x = check_and_invert(x, court_x, court_width, velocity_x);
-        velocity_y = check_and_invert(y, court_y, court_height, velocity_y);
 
         // Clear the screen before each draw.
         sdl_clear(renderer);
