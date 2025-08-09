@@ -15,7 +15,10 @@
         "src/main.cpp",
         "-Iinclude",
         "-lSDL2",
-        "-lSDL2_gfx"
+        "-lSDL2_gfx",
+        "-stdlib=libc++",
+        "-lc++",
+        "-lc++abi"
       ],
       "group": {
         "kind": "build",

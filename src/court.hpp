@@ -3,8 +3,6 @@
 #include <SDL2/SDL.h>
 #include "sdl/sdl_draw.hpp"
 
-
-
 inline void draw_court(SDL_Renderer* renderer) {
 
     // Draw outer court
@@ -16,4 +14,22 @@ inline void draw_court(SDL_Renderer* renderer) {
     const Color inner_color {0, 0, 0, 225};
     const SDL_Rect inner_court {10, 10, 620, 400}; 
     draw_rect(renderer, inner_color, inner_court);
+}
+
+inline bool at_boundary(float current, float start, float end) {
+
+    return current < start || current > end;
+}
+
+inline float check_and_invert(float current,
+                              float start,
+                              float end,
+                              float velocity) {
+
+    if (at_boundary(current, start, end)) {
+
+        return -velocity;
+    }
+
+    return velocity;
 }

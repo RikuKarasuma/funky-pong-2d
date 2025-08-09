@@ -9,6 +9,7 @@
         "system_error": "cpp",
         "__hash_table": "cpp",
         "__split_buffer": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "cmath": "cpp"
     }
 }
