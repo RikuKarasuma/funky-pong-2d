@@ -50,6 +50,8 @@ void main_loop() {
 
     float player_x { 40 };
     float player_y { (court_height / 2) - 37.5 };
+    float ai_x { court_width - 40 };
+    float ai_y { (court_height / 2) - 37.5 };
 
     const float angle = 
         static_cast<float>(rand()) /
@@ -73,6 +75,8 @@ void main_loop() {
         velocity_y = check_and_invert(y, court_y, court_height, velocity_y);
         velocity_x = player_check_and_invert(x, y, player_x, player_y, velocity_x);
         velocity_y = player_check_and_invert(x, y, player_x, player_y, velocity_y);
+        velocity_x = player_check_and_invert(x, y, ai_x, ai_y, velocity_x);
+        velocity_y = player_check_and_invert(x, y, ai_x, ai_y, velocity_y);
 
         x += velocity_x;
         y += velocity_y;
@@ -88,6 +92,17 @@ void main_loop() {
             }
         }
 
+                // If ball isn't within it's Y axis zone.
+        if (!(y > ai_y && y < (ai_y + 75))) {
+            // If the ball is below or above the player,
+            // Move the player towards the ball.
+            if (ai_y > y) {
+                ai_y = ai_y - (speed / 2);
+            } else if (ai_y < (y + 75)) {
+                ai_y = ai_y + (speed / 2);
+            }
+        }
+
 
         // Clear the screen before each draw.
         sdl_clear(renderer);
@@ -97,6 +112,7 @@ void main_loop() {
         draw_court(renderer);
         draw_ball(renderer, x, y);
         draw_player(renderer, player_x, player_y);
+        draw_player(renderer, ai_x, ai_y);
 
         SDL_RenderPresent(renderer);
 
