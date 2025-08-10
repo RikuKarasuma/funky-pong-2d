@@ -16,3 +16,13 @@ struct Circle {
     int16_t radius;
     Color color;
 };
+
+struct Vector {
+    float x;
+    float y;
+};
+
+struct VectorPair {
+    Vector one;
+    Vector two;
+};

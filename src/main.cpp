@@ -45,23 +45,34 @@ void main_loop() {
     const int16_t court_height = 395;
 
     // Starting point for ball  
-    float x { 320.0f };
-    float y { 210.0f };
+    // float x { 320.0f };
+    // float y { 210.0f };
+    Vector ball { 320.0f, 210.0f };
 
-    float player_x { 40 };
-    float player_y { (court_height / 2) - 37.5 };
-    float ai_x { court_width - 40 };
-    float ai_y { (court_height / 2) - 37.5 };
+    // float player_x { 40 };
+    // float player_y { (court_height / 2) - 37.5 };
+
+    Vector player {
+        40,
+        (court_height / 2) - 37.5
+    };
+
+    // float ai_x { court_width - 40 };
+    // float ai_y { (court_height / 2) - 37.5 };
+
+    Vector ai {
+        court_width - 40,
+        (court_height / 2) - 37.5
+    };
 
     const float angle = 
-        static_cast<float>(rand()) /
-        static_cast<float>(RAND_MAX) * 
-        2.0f *
-        M_PI;
+        (static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * 
+        (2.0f * M_PI);
 
-    const float speed = 7.5f;
-    float velocity_x = std::cos(angle) * speed;
-    float velocity_y = std::sin(angle) * speed;
+    Vector ball_velocity {
+        (std::cos(angle) * SPEED), //* (3.14f / 180.0f),
+        (std::sin(angle) * SPEED) //* (3.14f / 180.0f)
+    };
 
     while (true) {
 
@@ -71,35 +82,40 @@ void main_loop() {
             break;
         }
 
-        velocity_x = check_and_invert(x, court_x, court_width, velocity_x);
-        velocity_y = check_and_invert(y, court_y, court_height, velocity_y);
-        velocity_x = player_check_and_invert(x, y, player_x, player_y, velocity_x);
-        velocity_y = player_check_and_invert(x, y, player_x, player_y, velocity_y);
-        velocity_x = player_check_and_invert(x, y, ai_x, ai_y, velocity_x);
-        velocity_y = player_check_and_invert(x, y, ai_x, ai_y, velocity_y);
+        // Need to fix the ball getting stuck at the top and bottom boundaries.
+        ball_velocity.x = check_and_invert(ball.x, court_x, court_width, ball_velocity.x);
+        ball_velocity.y = check_and_invert(ball.y, court_y, court_height, ball_velocity.y);
 
-        x += velocity_x;
-        y += velocity_y;
+        // Determine that the ball has hit either paddle
+        const VectorPair player_new_velocity_and_position = player_check_and_invert(ball, player, ball_velocity, true);
+        ball_velocity = player_new_velocity_and_position.one;
+        ball = player_new_velocity_and_position.two;
+        const VectorPair ai_new_velocity_and_position = player_check_and_invert(ball, ai, ball_velocity, false);
+        ball_velocity = ai_new_velocity_and_position.one;
+        ball = player_new_velocity_and_position.two;
+
+        ball.x += ball_velocity.x;
+        ball.y += ball_velocity.y;
 
         // If ball isn't within it's Y axis zone.
-        if (!(y > player_y && y < (player_y + 75))) {
+        if (!(ball.y > player.y && ball.y < (player.y + 75))) {
             // If the ball is below or above the player,
             // Move the player towards the ball.
-            if (player_y > y) {
-                player_y = player_y - (speed / 2);
-            } else if (player_y < (y + 75)) {
-                player_y = player_y + (speed / 2);
+            if (player.y > ball.y) {
+                player.y = player.y - (SPEED / 2);
+            } else if (player.y < (ball.y + 75)) {
+                player.y = player.y + (SPEED / 2);
             }
         }
 
-                // If ball isn't within it's Y axis zone.
-        if (!(y > ai_y && y < (ai_y + 75))) {
+        // If ball isn't within it's Y axis zone.
+        if (!(ball.y > ai.y && ball.y < (ai.y + 75))) {
             // If the ball is below or above the player,
             // Move the player towards the ball.
-            if (ai_y > y) {
-                ai_y = ai_y - (speed / 2);
-            } else if (ai_y < (y + 75)) {
-                ai_y = ai_y + (speed / 2);
+            if (ai.y > ball.y) {
+                ai.y = ai.y - (SPEED / 2);
+            } else if (ai.y < (ball.y + 75)) {
+                ai.y = ai.y + (SPEED / 2);
             }
         }
 
@@ -110,9 +126,9 @@ void main_loop() {
 
         // Drawing logic
         draw_court(renderer);
-        draw_ball(renderer, x, y);
-        draw_player(renderer, player_x, player_y);
-        draw_player(renderer, ai_x, ai_y);
+        draw_ball(renderer, ball.x, ball.y);
+        draw_player(renderer, player.x, player.y);
+        draw_player(renderer, ai.x, ai.y);
 
         SDL_RenderPresent(renderer);
 

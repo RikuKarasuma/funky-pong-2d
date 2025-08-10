@@ -4,6 +4,8 @@
 #include "models.hpp"
 
 static const uint16_t BALL_RADIUS = 10;
+static const float SPEED = 7.5f;
+
 
 inline void draw_ball(SDL_Renderer* renderer,
                       float x,
