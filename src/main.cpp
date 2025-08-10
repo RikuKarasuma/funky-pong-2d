@@ -77,10 +77,15 @@ void main_loop() {
         x += velocity_x;
         y += velocity_y;
 
-        if (player_y > y) {
-            player_y = player_y - (speed / 2);
-        } else if (player_y < (y + 75)) {
-            player_y = player_y + (speed / 2);
+        // If ball isn't within it's Y axis zone.
+        if (!(y > player_y && y < (player_y + 75))) {
+            // If the ball is below or above the player,
+            // Move the player towards the ball.
+            if (player_y > y) {
+                player_y = player_y - (speed / 2);
+            } else if (player_y < (y + 75)) {
+                player_y = player_y + (speed / 2);
+            }
         }
 
 
