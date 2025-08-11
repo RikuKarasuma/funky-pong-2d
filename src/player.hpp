@@ -4,9 +4,9 @@
 #include "cstdlib"
 #include "cmath"
 
-static const int16_t PLAYER_WIDTH = 25;
-static const int16_t PLAYER_HEIGHT = 75;
-static const int8_t BOUNDARY_BUFFER = 10;
+inline constexpr short PLAYER_WIDTH = 25;
+inline constexpr short PLAYER_HEIGHT = 75;
+inline constexpr short BOUNDARY_BUFFER = 10;
 
 inline void draw_player(SDL_Renderer* renderer, const Vector& position) {
 

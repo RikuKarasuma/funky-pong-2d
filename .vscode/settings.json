@@ -37,5 +37,6 @@
         "stdexcept": "cpp",
         "cinttypes": "cpp",
         "execution": "cpp"
-    }
+    },
+    "c-cpp-flylint.clang.extraArgs": ["-std=c++20"]
 }

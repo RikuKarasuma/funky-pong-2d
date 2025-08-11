@@ -4,8 +4,8 @@
 #include "models.hpp"
 #include "court.hpp"
 
-static const uint16_t BALL_RADIUS = 10;
-static const float SPEED = 7.5f;
+inline constexpr short BALL_RADIUS = 10;
+inline constexpr float SPEED = 7.5f;
 
 
 inline void draw_ball(SDL_Renderer* renderer, const Vector& position) {

@@ -11,7 +11,7 @@
 #include <random>
 
 
-static short status {0};
+inline short status {0};
 
 enum Event {
     EXIT,
