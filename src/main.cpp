@@ -73,16 +73,15 @@ void main_loop() {
         check_player_boundaries(player, ai, ball, ball_velocity);
         ai_movement(ball, player, ai);
 
-
         // Clear the screen before each draw.
         sdl_clear(renderer);
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
         // Drawing logic
         draw_court(renderer);
-        draw_ball(renderer, ball.x, ball.y);
-        draw_player(renderer, player.x, player.y);
-        draw_player(renderer, ai.x, ai.y);
+        draw_ball(renderer, ball);
+        draw_player(renderer, player);
+        draw_player(renderer, ai);
 
         SDL_RenderPresent(renderer);
 

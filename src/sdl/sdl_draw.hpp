@@ -12,8 +12,8 @@ inline void sdl_clear(SDL_Renderer* renderer) {
 
 
 inline void draw_rect(SDL_Renderer* renderer,
-                      Color color,
-                      SDL_Rect rect) {
+                      const Color& color,
+                      const SDL_Rect& rect) {
 
     SDL_SetRenderDrawColor(
         renderer,
@@ -27,7 +27,7 @@ inline void draw_rect(SDL_Renderer* renderer,
 }
 
 inline void draw_circle(SDL_Renderer* renderer,
-                        Circle circle) {
+                        const Circle& circle) {
 
     circleRGBA(
         renderer,
