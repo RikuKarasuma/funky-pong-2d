@@ -21,19 +21,36 @@ inline void draw_court(SDL_Renderer* renderer) {
     draw_rect(renderer, inner_color, inner_court);
 }
 
-inline bool at_boundary(const float current,
-                        const float start,
-                        const float end) {
+inline bool at_top_boundary(const float current,
+                            const float start) {
 
-    return current < start || current > end;
+    return current < start;
+}
+
+inline bool at_bottom_boundary(const float current,
+                               const float end) {
+
+    return current > end;
 }
 
 inline float check_and_invert(const float current,
                               const float start,
                               const float end,
-                              const float velocity) {
+                              const float velocity,
+                              Vector& ball) {
 
-    if (at_boundary(current, start, end)) {
+    const bool ball_at_top_boundary = at_top_boundary(current, start);
+    const bool ball_at_bottom_boundary = at_bottom_boundary(current, end);
+
+    if (ball_at_top_boundary) {
+
+        ball.y = ball.y + 0.5f;
+
+        return -velocity;
+    }
+    else if(ball_at_bottom_boundary) {
+
+        ball.y = ball.y - 0.5f;
 
         return -velocity;
     }
