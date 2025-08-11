@@ -8,6 +8,7 @@
 #include "cmath"
 #include <iostream>
 #include "player.hpp"
+#include <random>
 
 
 static short status {0};
@@ -30,6 +31,11 @@ Event check_sdl_events() {
     }
 
     return NOTHING;
+}
+
+bool random_boolean(double p = 0.5) {
+    static std::mt19937 rnd(std::random_device{}());
+    return std::bernoulli_distribution(p)(rnd);
 }
 
 void main_loop() {
@@ -56,7 +62,7 @@ void main_loop() {
         (2.0f * (M_PI / 180.f));
 
     Vector ball_velocity {
-        (std::cos(angle) * SPEED),
+        random_boolean() ? (std::cos(angle) * SPEED) : - (std::cos(angle) * SPEED),
         (std::sin(angle) * SPEED)
     };
 
