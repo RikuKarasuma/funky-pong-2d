@@ -124,12 +124,59 @@ inline VectorPair player_check_and_invert(Vector ball,
     };
 }
 
+inline void check_player_boundaries(Vector& player,
+                                    Vector& ai,
+                                    Vector& ball,
+                                    Vector& ball_velocity) {
 
-/**
- *         const VectorPair player_new_velocity_and_position = player_check_and_invert(ball, player, ball_velocity, true);
-        ball_velocity = player_new_velocity_and_position.one;
-        //ball = player_new_velocity_and_position.two;
-        const VectorPair ai_new_velocity_and_position = player_check_and_invert(ball, ai, ball_velocity, true);
-        ball_velocity = ai_new_velocity_and_position.one;
-        //ball = player_new_velocity_and_position.two;
- */
+    // Determine that the ball has hit the left paddle.
+    VectorPair ball_new_velocity_and_position = player_check_and_invert(
+        ball,
+        player,
+        ball_velocity,
+        true
+    );
+
+    ball_velocity.x = ball_new_velocity_and_position.one.x;
+    ball_velocity.y = ball_new_velocity_and_position.one.y;
+
+    // Determine that the ball has hit the right paddle.
+    ball_new_velocity_and_position = player_check_and_invert(
+        ball,
+        ai,
+        ball_velocity,
+        false
+    );
+
+    // Update ball velocity and new ball position.
+    ball_velocity.x = ball_new_velocity_and_position.one.x;
+    ball_velocity.y = ball_new_velocity_and_position.one.y;
+    ball.x += ball_velocity.x;
+    ball.y += ball_velocity.y;
+}
+
+
+inline void ai_movement(Vector& ball, Vector& player, Vector& ai) {
+
+    // If ball isn't within it's Y axis zone.
+    if (!(ball.y > player.y && ball.y < (player.y + PLAYER_HEIGHT))) {
+        // If the ball is below or above the player,
+        // Move the player towards the ball.
+        if (player.y > ball.y) {
+            player.y = player.y - (SPEED / 2);
+        } else if (player.y < (ball.y + PLAYER_HEIGHT)) {
+            player.y = player.y + (SPEED / 2);
+        }
+    }
+
+    // If ball isn't within it's Y axis zone.
+    if (!(ball.y > ai.y && ball.y < (ai.y + PLAYER_HEIGHT))) {
+        // If the ball is below or above the player,
+        // Move the player towards the ball.
+        if (ai.y > ball.y) {
+            ai.y = ai.y - (SPEED / 2);
+        } else if (ai.y < (ball.y + PLAYER_HEIGHT)) {
+            ai.y = ai.y + (SPEED / 2);
+        }
+    }
+}

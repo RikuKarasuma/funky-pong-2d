@@ -3,6 +3,11 @@
 #include <SDL2/SDL.h>
 #include "sdl/sdl_draw.hpp"
 
+const static int16_t COURT_X = 25;
+const static int16_t COURT_Y = 25;
+const static int16_t COURT_WIDTH = 615;
+const static int16_t COURT_HEIGHT = 395;
+
 inline void draw_court(SDL_Renderer* renderer) {
 
     // Draw outer court
