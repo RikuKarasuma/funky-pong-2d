@@ -29,9 +29,54 @@ inline bool at_player(const Vector& ball, const Vector& player) {
         ball.y > (player.y - BALL_RADIUS - BOUNDARY_BUFFER);
 }
 
+inline Vector contact_normal(const Vector& ball, const Vector& player) {
+
+    // Calculate overlaps.
+    const float overlap_x_left = ball.x - (player.x - BALL_RADIUS - BOUNDARY_BUFFER);
+    const float overlap_x_right = (player.x + PLAYER_WIDTH + BALL_RADIUS + BOUNDARY_BUFFER) - ball.x;
+    const float overlap_y_top = ball.y - (player.y - BALL_RADIUS - BOUNDARY_BUFFER);
+    const float overlap_y_bottom = (player.y + PLAYER_HEIGHT + BALL_RADIUS + BOUNDARY_BUFFER) - ball.y;
+
+    // smallest overlap is the contact side.
+    const float minX = std::min(overlap_x_left, overlap_x_right);
+    const float minY = std::min(overlap_y_top, overlap_y_bottom);
+
+    if (minX < minY) {
+
+        return 
+            (overlap_x_left < overlap_x_right) ? 
+            Vector{-1.0f, 0.0f} :
+            Vector{+1.0f, 0.0f};
+    }
+    else {
+
+        return 
+            (overlap_y_top < overlap_y_bottom) ?
+            Vector{0.0f, -1.0f} :
+            Vector{0.0f, +1.0f};
+    }
+}
+
+inline float penetration_amount(const Vector& ball, const Vector& player, const Vector& normal) {
+
+    // Calculate the ball penetration in order to determine the amount to push away by.
+    const float overlap_x_left = ball.x - (player.x - BALL_RADIUS - BOUNDARY_BUFFER);
+    const float overlap_x_right = (player.x + PLAYER_WIDTH + BALL_RADIUS + BOUNDARY_BUFFER) - ball.x;
+    const float overlap_y_top = ball.y - (player.y - BALL_RADIUS - BOUNDARY_BUFFER);
+    const float overlap_y_bottom = (player.y + PLAYER_HEIGHT + BALL_RADIUS + BOUNDARY_BUFFER) - ball.y;
+
+    const float push =
+                    (normal.x < 0) ? overlap_x_left :
+                    (normal.x > 0) ? overlap_x_right :
+                    (normal.y < 0) ? overlap_y_top : overlap_y_bottom;
+
+    return push + 0.01f;
+}
+
+
 inline float product(const Vector& one, const Vector& two) {
 
-    return one.x * two.x * one.y * two.y;
+    return one.x * two.x + one.y * two.y;
 }
 
 inline Vector multiply(const Vector& vector, const float by) {
@@ -71,12 +116,23 @@ inline Vector rotate(const Vector& vector, float radians) {
     };
 }
 
-inline VectorPair player_check_and_invert(Vector& ball,
-                                          const Vector& player,
-                                          Vector& velocity,
-                                          const bool left_paddle) {
+inline VectorPair player_check_and_invert(const Vector& player,
+                                          const bool left_paddle,
+                                          Vector& ball,
+                                          Vector& velocity) {
     
     if (at_player(ball, player)) {
+
+        const Vector normal = contact_normal(ball, player);
+
+        if (velocity.x * normal.x + velocity.y * normal.y > 0.0f) {
+
+            return {
+                velocity,
+                ball
+            };
+        }
+
 
         // Calculate offset from the center of the paddle.
         const float half_paddle_height = 37.5f;
@@ -93,9 +149,15 @@ inline VectorPair player_check_and_invert(Vector& ball,
         // Calculate the new direction.
         const float max_degrees = 25.0f;
         const float phi_radians = offset * (max_degrees * M_PI / 180.0f);
-        Vector n = (left_paddle ? Vector { 1.0f, 0.0f } : Vector { -1.0f, 0.0f });
-        Vector new_velocity = reflect(velocity, n);
-        new_velocity = rotate(new_velocity, +phi_radians);
+        const float push_amount = penetration_amount(ball, player, normal);
+        ball.x += normal.x * push_amount;
+        ball.y += normal.y * push_amount;
+
+        Vector new_velocity = reflect(velocity, normal);
+
+        if (std::fabs(normal.x) > 0.5f) {
+            new_velocity = rotate(new_velocity, +phi_radians);
+        }
 
         // Calculate the new speed.
         const float speed = std::sqrt(
@@ -111,9 +173,6 @@ inline VectorPair player_check_and_invert(Vector& ball,
         if (!left_paddle && new_velocity.x >= 0.0f) {
              new_velocity.x = -std::max(std::abs(new_velocity.x), speed);
         }
-
-        // Ensure the ball doesn't get stuck within the paddle.
-        ball.x += left_paddle ? +0.5f : -0.5f;
 
         return {
             new_velocity,
@@ -134,10 +193,10 @@ inline void check_player_boundaries(const Vector& player,
 
     // Determine that the ball has hit the left paddle.
     VectorPair ball_new_velocity_and_position = player_check_and_invert(
-        ball,
         player,
-        ball_velocity,
-        true
+        true,
+        ball,
+        ball_velocity
     );
 
     ball_velocity.x = ball_new_velocity_and_position.one.x;
@@ -145,10 +204,10 @@ inline void check_player_boundaries(const Vector& player,
 
     // Determine that the ball has hit the right paddle.
     ball_new_velocity_and_position = player_check_and_invert(
-        ball,
         ai,
-        ball_velocity,
-        false
+        false,
+        ball,
+        ball_velocity
     );
 
     // Update ball velocity and new ball position.
