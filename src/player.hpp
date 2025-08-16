@@ -199,8 +199,19 @@ inline void check_player_boundaries(const Vector& player,
         ball_velocity
     );
 
-    ball_velocity.x = ball_new_velocity_and_position.one.x;
-    ball_velocity.y = ball_new_velocity_and_position.one.y;
+    if (ball_velocity.x != ball_new_velocity_and_position.one.x ||
+            ball_velocity.y != ball_new_velocity_and_position.one.y) {
+
+        ball_velocity.x = ball_new_velocity_and_position.one.x;
+        ball_velocity.y = ball_new_velocity_and_position.one.y;
+
+        ball.x += ball_velocity.x;
+        ball.y += ball_velocity.y;
+
+        // Return early as the ball can't be at both paddles within
+        // the same tick.
+        return;
+    }
 
     // Determine that the ball has hit the right paddle.
     ball_new_velocity_and_position = player_check_and_invert(
@@ -213,6 +224,7 @@ inline void check_player_boundaries(const Vector& player,
     // Update ball velocity and new ball position.
     ball_velocity.x = ball_new_velocity_and_position.one.x;
     ball_velocity.y = ball_new_velocity_and_position.one.y;
+
     ball.x += ball_velocity.x;
     ball.y += ball_velocity.y;
 }
