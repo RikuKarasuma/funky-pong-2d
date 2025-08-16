@@ -46,13 +46,13 @@ inline float check_and_invert(const float current,
 
         ball.y = ball.y + 0.5f;
 
-        return -velocity;
+        return std::sin(1.f) * -velocity;
     }
     else if(ball_at_bottom_boundary) {
 
         ball.y = ball.y - 0.5f;
 
-        return -velocity;
+        return std::sin(1.f) * -velocity;
     }
 
     return velocity;
